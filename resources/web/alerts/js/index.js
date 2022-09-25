@@ -526,10 +526,10 @@ $(function () {
 
         video.play().catch(() => {
             console.error('Failed to play ' + video.src);
-            context.isPlaying = false;
+            isPlaying = false;
         });
         video.addEventListener('ended', (event) => {
-            context.isPlaying = false;
+            isPlaying = false;
             video.pause();
             video.remove();
         });
@@ -537,7 +537,7 @@ $(function () {
             setTimeout(() => {
                 video.pause();
                 video.remove();
-                context.isPlaying = false;
+                isPlaying = false;
             }, duration);
         }
     };
