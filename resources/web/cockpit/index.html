@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PhantomBot Cockpit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/panel/vendors/font-awesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="/cockpit/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../panel/vendors/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/cockpit/css/cockpit.css"/>
+    <link rel="stylesheet" href="/panel/vendors/toastr/toastr.min.css">
+
+    <link rel="icon" href="/favicon.ico"/>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Cockpit</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <button id="btnStopMedia" class="btn btn-outline-success me-2" type="button">Stop Playing</button>
+    </div>
+</nav>
+<main role="main" class="container-xxl">
+    <div class="row gx-1">
+        <div class="col-lg-6">
+            <div class="card" id="chat-column">
+                <div class="card-header">
+                    Chat
+                </div>
+                <div class="card-body vh50-overflow-y" id="chat-col-body">
+                    <ul id="chatrows" class="list-group">
+                        <li class="list-group-item">
+                            <span class="me-1">10:36</span>
+                            <span class="me-2">OtherUser:</span>
+                            <span class="chat-message">This is a sample chat message</span>
+                        </li>
+                        <li class="list-group-item">
+                            <span class="me-1">10:36</span>
+                            <span class="me-2">OtherUser:</span>
+                            <span class="chat-message">This message lacks emojis DuckerZ LUL</span>
+                        </li>
+                        <li class="list-group-item">
+                            <span class="me-1">10:36</span>
+                            <span class="me-2">Username:</span>
+                            <span class="chat-message">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card" id="macro-column">
+                <div class="card-header">
+                    Macros
+                    <button type="button" class="btn btn-sm" id="modeToggle-macros"><i class="fa fa-edit"></i></button>
+                </div>
+                <div class="card-body vh50-overflow-y" id="macro-col-body">
+                    <ul id="macrolist" class="list-group">
+                        <li class="list-group-item" data-macroId="playSomeMusic">
+                            <button type="button" class="btn btn-secondary btn-sm me-2">
+                                <i class="fa fa-play"></i>
+                            </button>
+                            <span class="title">Play some music</span>
+                        </li>
+                        <li class="list-group-item" data-macroId="10sParty">
+                            <button type="button" class="btn btn-secondary btn-sm me-2">
+                                <i class="fa fa-play"></i>
+                            </button>
+                            <span class="title">10s Party</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card" id="clip-column">
+                <div class="card-header">
+                    Clips
+                </div>
+                <div class="card-body vh50-overflow-y" id="clips-col-body">
+                    <ul id="cliplist" class="list-group">
+                        <li class="list-group-item">
+                            <button type="button" class="btn btn-secondary btn-sm me-2">
+                                <i class="fa fa-play"></i>
+                            </button>
+                            <span class="title">Andreas</span>
+                        </li>
+                        <li class="list-group-item">
+                            <button type="button" class="btn btn-secondary btn-sm me-2">
+                                <i class="fa fa-play"></i>
+                            </button>
+                            <span class="title">Kranpl&auml;tze</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card" id="sounds-column">
+                <div class="card-header">
+                    Sounds
+                </div>
+                <div class="card-body vh50-overflow-y" id="sounds-col-body">
+                    <ul id="soundlist" class="list-group">
+                        <li class="list-group-item">
+                            <button type="button" class="btn btn-secondary btn-sm me-2">
+                                <i class="fa fa-play"></i>
+                            </button>
+                            <span class="title">Game Over</span>
+                        </li>
+                        <li class="list-group-item">
+                            <button type="button" class="btn btn-secondary btn-sm me-2">
+                                <i class="fa fa-play"></i>
+                            </button>
+                            <span class="title">Coin</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card" id="hexagonControl-column">
+                <div class="card-header">
+                    Sounds
+                </div>
+                <div class="card-body vh50-overflow-y" id="hexagonControl-col-body">
+                    <div class="mb-3">
+                        <label for="btnHexagonName" class="form-label">Player</label>
+                        <input id="btnHexagonName" class="form-control" type="text"/>
+                    </div>
+                    <div class="mb-3">
+                        <button id="btnHexagonGameStart" class="btn btn-primary">Start Game</button>
+                        <button id="btnHexagonGameEnd" class="btn btn-secondary">End Game</button>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-auto">
+                            <label for="btnHexagonName" class="form-label">Speed</label>
+                        </div>
+                        <div class="col-auto">
+                            <input id="inputHexagonLevel" class="form-control col-auto" type="number" min="0" max="10"
+                                   value="2"/>
+                        </div>
+                        <div class="col-auto">
+                            <button id="btnHexagonSetLevel" class="btn btn-secondary col-auto">Set Level</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" tabindex="-1" id="modalConfirmDeleteMacro">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Do you really want to delete your macro "<span id="modalDeleteMacroName">NOT SET</span>". This
+                        action can not be undone!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="modalConfirmDeleteSubmit">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" tabindex="-1" id="modalEditMacro">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditMacroTitle">Placeholder</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <div class="card" id="macroEditor-scriptColumn">
+                                    <div class="card-header">
+                                        Script
+                                    </div>
+                                    <div class="card-body" id="macroEditor-scriptCol-body">
+                                        <ul id="macroEditor-script" class="list-group">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="card" id="macroEditor-attributeColumn">
+                                    <div class="card-header">
+                                        Block Settings
+                                    </div>
+                                    <div class="card-body" id="macroEditor-attributeCol-body">
+                                        <form id="macroEditor-attrPause">
+                                            <div class="mb-3">
+                                                <label for="macroEditor-pauseDuration"
+                                                       class="form-label">Duration</label>
+                                                <input type="number" class="form-control" id="macroEditor-pauseDuration"
+                                                       aria-describedby="pauseDurationHelp" min="0" max="100000"
+                                                       step="10" placeholder="100"/>
+                                                <div id="pauseDurationHelp" class="form-text">The length of the pause in
+                                                    ms.
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <button type="button" id="macroEditor-submitPause"
+                                                        class="btn btn-primary">
+                                                    Save
+                                                </button>
+                                            </div>
+                                        </form>
+                                        <form id="macroEditor-attrEmote">
+                                            <div class="mb-3">
+                                                <label for="macroEditor-emoteProvider"
+                                                       class="form-label">Provider</label>
+                                                <select id="macroEditor-emoteProvider" class="form-select"
+                                                        aria-label="Emote Provider"
+                                                        aria-describedby="emoteProviderHelp">
+                                                    <option value="local">Local</option>
+                                                    <option value="twitch">Twitch</option>
+                                                    <option value="bttv">BetterTwitchTV</option>
+                                                    <option value="ffz">FrankerFaceZ</option>
+                                                </select>
+                                                <div id="emoteProviderHelp" class="form-text">The provider of the emote
+                                                    that knows how to translate the word into an image.
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="macroEditor-emoteText" class="form-label">Emote</label>
+                                                <div class="input-group input-group-sm mb-3">
+                                                    <input type="text" class="form-control" id="macroEditor-emoteText"
+                                                           aria-describedby="emoteTextHelp"
+                                                           placeholder="TheIlluminati"/>
+                                                    <span class="input-group-text"><i id="macroEditor-emoteText-status"
+                                                                                      class="fa fa-question-circle"></i></span>
+                                                </div>
+                                                <input type="hidden" id="macroEditor-emoteId"/>
+                                                <div id="emoteTextHelp" class="form-text">The filename for a local emote
+                                                    otherwise a single text representation of an emote as you would
+                                                    write it in the chat.
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="macroEditor-emoteAmount" class="form-label">Amount</label>
+                                                <input type="number" class="form-control" id="macroEditor-emoteAmount"
+                                                       aria-describedby="emoteAmountHelp" placeholder="1" step="1"
+                                                       min="1" max="1000"/>
+                                                <div id="emoteAmountHelp" class="form-text">The amount of emotes to
+                                                    spawn
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="macroEditor-emoteAnimation"
+                                                       class="form-label">Animation</label>
+                                                <select id="macroEditor-emoteAnimation" class="form-select"
+                                                        aria-label="Emote Animation"
+                                                        aria-describedby="emoteAnimationHelp">
+                                                    <option value="">Default</option>
+                                                    <option value="bounce">bounce</option>
+                                                    <option value="flash">flash</option>
+                                                    <option value="headShake">headShake</option>
+                                                    <option value="heartBeat">heartBeat</option>
+                                                    <option value="jello">jello</option>
+                                                    <option value="pulse">pulse</option>
+                                                    <option value="rubberBand">rubberBand</option>
+                                                    <option value="shakeX">shakeX</option>
+                                                    <option value="shakeY">shakeY</option>
+                                                    <option value="swing">swing</option>
+                                                    <option value="tada">tada</option>
+                                                    <option value="wobble">wobble</option>
+                                                </select>
+                                                <div id="emoteAnimationHelp" class="form-text">Animation to play with
+                                                    the emote. Uses Attention Seekers from <a
+                                                            href="https://animate.style">Animate.css</a>. Using default
+                                                    lets the receiver of the event decide how to animate the emote.
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="macroEditor-emoteDuration"
+                                                       class="form-label">Duration</label>
+                                                <input type="number" class="form-control" id="macroEditor-emoteDuration"
+                                                       aria-describedby="emoteDurationHelp" placeholder="10000"
+                                                       step="1000"
+                                                       min="1000" max="600000"/>
+                                                <div id="emoteDurationHelp" class="form-text">The display duration in ms
+                                                    of the emote (if supported by the receiver)
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="on"
+                                                           id="macroEditor-emoteIgnoreSleep"
+                                                           aria-describedby="emoteIgnoreSleepHelp">
+                                                    <label class="form-check-label" for="macroEditor-emoteIgnoreSleep">
+                                                        Ignore Distribution Sleep
+                                                    </label>
+                                                    <div id="emoteIgnoreSleepHelp" class="form-text">Tells the receiver
+                                                        to skip a pause for a better distribution of emotes
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <button type="button" id="macroEditor-submitEmote"
+                                                        class="btn btn-primary">Save
+                                                </button>
+                                            </div>
+                                        </form>
+                                        <form id="macroEditor-attrSound">
+                                            <div class="mb-3">
+                                                <label for="macroEditor-soundFile" class="form-label">Soundfile</label>
+                                                <select id="macroEditor-soundFile" class="form-select"
+                                                        aria-label="Sound file" aria-describedby="soundfileHelp">
+                                                    <option value="placeholder">Placeholder</option>
+                                                </select>
+                                                <div id="soundfileHelp" class="form-text">The sound file to play.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="macroEditor-soundDuration"
+                                                       class="form-label">Duration</label>
+                                                <input type="number" class="form-control" id="macroEditor-soundDuration"
+                                                       aria-describedby="soundDurationHelp" min="-1" step="1000"
+                                                       placeholder="-1"/>
+                                                <div id="soundDurationHelp" class="form-text">How long should the sound
+                                                    played? Set it to 0 or -1 to play the whole file.
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <button type="button" id="macroEditor-submitSound"
+                                                        class="btn btn-primary">
+                                                    Save
+                                                </button>
+                                            </div>
+                                        </form>
+                                        <form id="macroEditor-attrClip">
+                                            <div class="mb-3">
+                                                <label for="macroEditor-clip" class="form-label">Clip file</label>
+                                                <select id="macroEditor-clip" class="form-select" aria-label="Clip file"
+                                                        aria-describedby="clipefileHelp">
+                                                    <option value="placeholder">Placeholder</option>
+                                                </select>
+                                                <div id="clipfileHelp" class="form-text">The clip to play.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="on"
+                                                           id="macroEditor-clipRepeat">
+                                                    <label class="form-check-label" for="macroEditor-clipRepeat">
+                                                        Repeat Clip
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="macroEditor-clipDuration"
+                                                       class="form-label">Duration</label>
+                                                <input type="number" class="form-control" id="macroEditor-clipDuration"
+                                                       aria-describedby="clipDurationHelp" min="-1" step="1000"
+                                                       placeholder="-1"/>
+                                                <div id="clipDurationHelp" class="form-text">How long should the clip
+                                                    played or repeated? Set it to 0 or -1 to play the whole file.
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <button type="button" id="macroEditor-submitClip"
+                                                        class="btn btn-primary">
+                                                    Save
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form class="modal-footer" id="macroEditor-footer">
+                    <div class="me-auto input-group w-75 has-validation">
+                        <span class="input-group-text">Macroname</span>
+                        <input class="form-control" id="macroEditor-macroName" type="text" maxlength="32"
+                               placeholder="My Macro" required/>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            data-bs-target="#modalEditMacro">Close
+                    </button>
+                    <button type="button" class="btn btn-danger" id="modalEditMacroSubmit">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 5">
+        <div id="toast-error" class="toast bg-danger text-white hide" role="alert" aria-live="assertive"
+             aria-atomic="true">
+            <div class="toast-body">
+                Hello, world! This is a toast message.
+            </div>
+        </div>
+    </div>
+    <div id="toast-success" class="toast bg-success text-white hide" role="alert" aria-live="assertive"
+         aria-atomic="true">
+        <div class="toast-body">
+            Hello, world! This is a toast message.
+        </div>
+    </div>
+</main>
+
+<script src="/cockpit/js/bootstrap.min.js" type="application/javascript"></script>
+<script src="/panel/vendors/jquery/jquery.min.js"></script>
+<script src="/panel/vendors/PACE/pace.min.js"></script>
+<script src="/panel/vendors/toastr/toastr.min.js"></script>
+<script src="/panel/js/utils/panelConfig.js"></script>
+<script src="/common/reconnecting-websocket/reconnectingWS.min.js"></script>
+<script src="/panel/js/utils/helpers.js"></script>
+<script src="/cockpit/js/backend.js" type="text/javascript"></script>
+<script src="/cockpit/js/macroeditor.js" type="text/javascript"></script>
+<script src="/cockpit/js/cockpit.js" type="text/javascript"></script>
+</body>
+</html>
