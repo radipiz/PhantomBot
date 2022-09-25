@@ -96,6 +96,7 @@ import tv.phantombot.httpserver.HTTPOAuthHandler;
 import tv.phantombot.httpserver.HTTPPanelAndYTHandler;
 import tv.phantombot.httpserver.HttpSetupHandler;
 import tv.phantombot.panel.WsAlertsPollsHandler;
+import tv.phantombot.panel.WsCockpitHandler;
 import tv.phantombot.panel.WsPanelHandler;
 import tv.phantombot.panel.WsPanelRemoteLoginHandler;
 import tv.phantombot.script.Script;
@@ -126,6 +127,8 @@ public final class PhantomBot implements Listener {
     private WsAlertsPollsHandler alertsPollsHandler;
     private WsPanelHandler panelHandler;
     private WsYTHandler ytHandler;
+
+    private WsCockpitHandler cockpitHandler;
     private HTTPOAuthHandler oauthHandler;
     private HTTPAuthenticatedHandler httpAuthenticatedHandler;
     private HTTPPanelAndYTHandler httpPanelHandler;
@@ -480,6 +483,13 @@ public final class PhantomBot implements Listener {
 
             this.tmi = new TwitchMessageInterface();
         }
+
+        this.cockpitHandler = (WsCockpitHandler) new WsCockpitHandler(
+            CaselessProperties.instance().getProperty("webauthro"),
+            CaselessProperties.instance().getProperty("webauth"),
+            alertsPollsHandler
+        ).register();
+        EventBus.instance().register(this.cockpitHandler);
     }
 
     /**
