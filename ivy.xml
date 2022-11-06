@@ -54,5 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <dependency org="com.twitter" name="twitter-api-java-sdk" rev="2.0.2" />
         <dependency org="org.xerial" name="sqlite-jdbc" rev="3.39.4.1"/>
         <dependency org="com.vdurmont" name="emoji-java" rev="5.1.1" />
+        <dependency org="org.junit.jupiter" name="junit-jupiter-api" rev="5.9.1"/>
+        <dependency org="org.mockito" name="mockito-core" rev="4.8.1"/>
+        <dependency org="org.mockito" name="mockito-inline" rev="4.8.1"/>
     </dependencies>
 </ivy-module>
