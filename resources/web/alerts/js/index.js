@@ -29,8 +29,10 @@ $(function () {
     const CONF_ENABLE_FLYING_EMOTES = 'enableFlyingEmotes';
     const CONF_ENABLE_GIF_ALERTS = 'enableGifAlerts';
     const CONF_ENABLE_VIDEO_CLIPS = 'enableVideoClips';
+    const CONF_ENABLE_TTS = 'enableTts';
     const CONF_VIDEO_CLIP_VOLUME = 'videoClipVolume';
     const CONF_GIF_ALERT_VOLUME = 'gifAlertVolume';
+    const CONF_TTS_VOLUME = 'ttsVolume';
 
     const PROVIDER_TWITCH = 'twitch';
     const PROVIDER_LOCAL = 'local';
@@ -235,7 +237,9 @@ $(function () {
                         handleGifAlert(event);
                     } else if (event.audio_panel_hook !== undefined) {
                         handleAudioHook(event);
-                    } else {
+                    } else if (event.alerttype !== undefined && event.alerttype === "tts"){
+                    handleTts(event);
+                } else {
                         printDebug('Received message and don\'t know what to do about it: ' + event);
                         isPlaying = false;
                     }
@@ -349,6 +353,34 @@ $(function () {
             $(audio).on('ended', function () {
                 audio.currentTime = 0;
                 isPlaying = false;
+            });
+            playingAudioFiles.push(audio);
+            // Play the audio.
+            audio.play().catch(function (err) {
+                console.log(err);
+            });
+        } else {
+            isPlaying = false;
+        }
+    }
+
+    function handleTts(json) {
+        if (getOptionSetting(CONF_ENABLE_TTS, 'false')) === 'true') {
+
+            // Create a new audio file.
+            audio = new Audio("data:" + json.mimetype + ";base64," + json.audio);
+            audio.volume = getOptionSetting(CONF_TTS_VOLUME, '1'));
+
+            try {
+                console.log("Playing TTS: " + json.text);
+            } except(_) {
+            }
+
+            // Add an event handler.
+            $(audio).on('ended', function () {
+                audio.currentTime = 0;
+                isPlaying = false;
+                this.remove();
             });
             playingAudioFiles.push(audio);
             // Play the audio.
