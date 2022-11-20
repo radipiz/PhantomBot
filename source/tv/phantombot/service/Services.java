@@ -10,7 +10,7 @@ public class Services {
     private static Text2SpeechProvider tts;
 
     private static Text2SpeechProvider createText2Speech() throws ServiceNotConfiguredException, ServiceConfigurationIncompleteException {
-        String provider = CaselessProperties.instance().getProperty(CONFIG_PREFIX_TEXT2SPEECH + ".provider", "");
+        String provider = CaselessProperties.instance().getProperty(CONFIG_PREFIX_TEXT2SPEECH + CONFIG_KEY_PROVIDER, "");
         Text2SpeechProvider ttsProvider;
         com.gmt2001.Console.debug.println(String.format("Trying to configure text2speech provider. '%s'", provider));
         switch(provider){
