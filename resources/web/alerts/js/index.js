@@ -365,15 +365,15 @@ $(function () {
     }
 
     function handleTts(json) {
-        if (getOptionSetting(CONF_ENABLE_TTS, 'false')) === 'true') {
+        if (getOptionSetting(CONF_ENABLE_TTS, 'false') === 'true') {
 
             // Create a new audio file.
             audio = new Audio("data:" + json.mimetype + ";base64," + json.audio);
-            audio.volume = getOptionSetting(CONF_TTS_VOLUME, '1'));
+            audio.volume = getOptionSetting(CONF_TTS_VOLUME, '1');
 
             try {
                 console.log("Playing TTS: " + json.text);
-            } except(_) {
+            } catch(_) {
             }
 
             // Add an event handler.

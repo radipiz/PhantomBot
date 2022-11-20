@@ -4,9 +4,7 @@ import com.gmt2001.httpclient.HttpClient;
 import com.gmt2001.httpclient.HttpClientResponse;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONObject;
 import tv.phantombot.CaselessProperties;
@@ -58,7 +56,7 @@ public class GameTtsImpl implements Text2SpeechProvider {
     public static final String PATH_SYNTHESIZE = "/synthesize";
     public static final String AUDIO_MIMETYPE = "audio/mp3";
 
-    protected Map<String, Object> parameters = new HashMap<>();
+    protected TtsParams.GameTtsParams parameters = new TtsParams.GameTtsParams();
 
     private final URI serviceUri;
 
@@ -74,24 +72,23 @@ public class GameTtsImpl implements Text2SpeechProvider {
             throw new ServiceConfigurationIncompleteException("Configuration key " + key + " contains invalid value: " + value, e);
         }
 
-        Map.of(
-                CONFIG_EMOTION, PARAM_EMOTION_ID,
-                CONFIG_SPEAKER, PARAM_SPEAKER_ID,
-                CONFIG_STYLE, PARAM_STYLE_ID
-        ).forEach((configKey, paramKey) -> {
-            String iKey = Services.CONFIG_PREFIX_TEXT2SPEECH + configKey;
-            String iValue = CaselessProperties.instance().getProperty(iKey, "");
-            if (!iValue.isEmpty()) {
-                this.parameters.put(paramKey, Integer.parseInt(iValue));
-            }
-        });
+        String emotionId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + CONFIG_EMOTION, "");
+        String speakerId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + CONFIG_EMOTION, "");
+        String styleId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + CONFIG_EMOTION, "");
+        String speechSpeed = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + CONFIG_EMOTION, "");
 
-        key = Services.CONFIG_PREFIX_TEXT2SPEECH  + CONFIG_SPEECH_SPEED;
-        value = CaselessProperties.instance().getProperty(key, "");
-        if (!value.isEmpty()) {
-            this.parameters.put(CONFIG_SPEECH_SPEED, Float.parseFloat(value));
+        if(!emotionId.isEmpty()){
+            parameters.Emotion_id(Integer.parseInt(emotionId));
         }
-
+        if(!speakerId.isEmpty()){
+            parameters.Speaker_id(Integer.parseInt(speakerId));
+        }
+        if(!styleId.isEmpty()){
+            parameters.Style_id(Integer.parseInt(styleId));
+        }
+        if(!speechSpeed.isEmpty()){
+            parameters.Speech_speed(Float.parseFloat(speechSpeed));
+        }
     }
 
     @Override
@@ -100,9 +97,8 @@ public class GameTtsImpl implements Text2SpeechProvider {
     }
 
     @Override
-    public byte[] synthesize(String text, Map<String, Object> params) throws Text2SpeechFailedException {
-        JSONObject postParams = new JSONObject();
-        parameters.forEach(postParams::put);
+    public byte[] synthesize(String text, TtsParams.Params params) throws Text2SpeechFailedException {
+        JSONObject postParams = new JSONObject(params.getParams());
         postParams.keySet().retainAll(List.of(PARAM_EMOTION_ID, PARAM_SPEAKER_ID, PARAM_STYLE_ID, PARAM_SPEECH_SPEED));
         postParams.put(PARAM_TEXT, text);
         HttpClientResponse response = HttpClient.post(URI.create(serviceUri + PATH_SYNTHESIZE), postParams);
@@ -117,7 +113,7 @@ public class GameTtsImpl implements Text2SpeechProvider {
     }
 
     @Override
-    public Map<String, Object> getParameters() {
+    public TtsParams.Params getParameters() {
         return parameters;
     }
 
@@ -129,49 +125,5 @@ public class GameTtsImpl implements Text2SpeechProvider {
     @Override
     public String getProviderName(){
         return PROVIDER_NAME;
-    }
-
-    public int getEmotionId() {
-        return (int) parameters.get(PARAM_EMOTION_ID);
-    }
-
-    public void setEmotionId(int emotionId) {
-        if (emotionId < 0 || emotionId > 7) {
-            throw new IllegalArgumentException("Only values between 0 and 7 are possible");
-        }
-        parameters.put(PARAM_EMOTION_ID, emotionId);
-    }
-
-    public int getSpeakerId() {
-        return (int) parameters.get(PARAM_SPEAKER_ID);
-    }
-
-    public void setSpeakerId(int speakerId) {
-        if (speakerId < 1 || speakerId > 258) {
-            throw new IllegalArgumentException("Only values between 1 and 258 are possible");
-        }
-        parameters.put(PARAM_SPEAKER_ID, speakerId);
-    }
-
-    public float getSpeechSpeed() {
-        return (float) parameters.get(PARAM_SPEECH_SPEED);
-    }
-
-    public void setSpeechSpeed(float speechSpeed) {
-        if (speechSpeed <= 0.0f || speechSpeed > 2) {
-            throw new IllegalArgumentException("speech_speed must be within 0 and 2");
-        }
-        parameters.put(PARAM_SPEECH_SPEED, speechSpeed);
-    }
-
-    public int getStyleId() {
-        return (int) parameters.get(PARAM_STYLE_ID);
-    }
-
-    public void setStyleId(int styleId) {
-        if (styleId < 0 || styleId > 255) {
-            throw new IllegalArgumentException("Only values between 0 and 255 are possible");
-        }
-        parameters.put(PARAM_STYLE_ID, styleId);
     }
 }

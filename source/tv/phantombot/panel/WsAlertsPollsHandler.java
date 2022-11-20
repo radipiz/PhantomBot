@@ -26,6 +26,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,11 +36,11 @@ import tv.phantombot.event.EventBus;
 import tv.phantombot.event.webpanel.websocket.WebPanelSocketUpdateEvent;
 import tv.phantombot.scripts.handler.text2speech.Text2SpeechFailedException;
 import tv.phantombot.scripts.handler.text2speech.Text2SpeechProvider;
+import tv.phantombot.scripts.handler.text2speech.TtsParams;
 import tv.phantombot.service.ServiceException;
 import tv.phantombot.service.Services;
 
 /**
- *
  * @author gmt2001
  */
 public class WsAlertsPollsHandler implements WsFrameHandler {
@@ -163,9 +164,10 @@ public class WsAlertsPollsHandler implements WsFrameHandler {
         }
     }
 
-    public void stopMedia(){
+    public void stopMedia() {
         stopMedia("all");
     }
+
     public void stopMedia(String type) {
         try {
             JSONStringer jsonObject = new JSONStringer();
@@ -196,14 +198,15 @@ public class WsAlertsPollsHandler implements WsFrameHandler {
         }
     }
 
-    public void playVideo(String filename){
+    public void playVideo(String filename) {
         playVideo(filename, -1, false);
     }
-    public void playVideo(String filename, int durationMs){
+
+    public void playVideo(String filename, int durationMs) {
         playVideo(filename, durationMs, false);
     }
 
-    public void playVideo(String filename, boolean fullscreen){
+    public void playVideo(String filename, boolean fullscreen) {
         playVideo(filename, -1, fullscreen);
     }
 
@@ -297,20 +300,45 @@ public class WsAlertsPollsHandler implements WsFrameHandler {
         sendJSONToAll(macroJson);
     }
 
+    /**
+     * Synthesizes text to speech and sends Base64 encoded audio together with some information
+     * to alerts overlay
+     *
+     * @param text The text to synthesize
+     */
+    public void playTextToSpeech(String text) {
+        playTextToSpeech(text, null);
+    }
+
+    /**
+     * Synthesizes text to speech and sends Base64 encoded audio together with some information
+     * to alerts overlay
+     *
+     * @param text   The text to synthesize
+     * @param params parameters for the configured TTS engine (speaker, style, speed, etc) or
+     *               null for configured defaults
+     */
     public void playTextToSpeech(String text, TtsParams.GameTtsParams params) {
         try {
             Text2SpeechProvider ttsEngine = Services.getText2Speech();
-            String speech = Base64.getEncoder().encodeToString(ttsEngine.synthesize(text));
+            byte[] speech;
+            JSONObject paramsJson;
+            // if params is null, use the defaults of the configured engine
+            if (params == null) {
+                paramsJson = new JSONObject(ttsEngine.getParameters().getParams());
+                speech = ttsEngine.synthesize(text);
+            } else {
+                paramsJson = new JSONObject(params.getParams());
+                speech = ttsEngine.synthesize(text, params);
+            }
+            String speechEncoded = Base64.getEncoder().encodeToString(speech);
             JSONStringer jsonObject = new JSONStringer();
-            JSONObject paramsJson = new JSONObject()
-                    .put("speech_speed", params.getSpeech_speed())
-                    .put("emotion_id", params.getEmotion_id())
-                    .put("style_id", params.getStyle_id());
+
             jsonObject.object()
                     .key("alerttype").value("tts")
                     .key("engine").value(ttsEngine.getProviderName())
                     .key("text").value(text)
-                    .key("audio").value(speech)
+                    .key("audio").value(speechEncoded)
                     .key("mimetype").value(ttsEngine.getAudioMimeType())
                     .key("params").value(paramsJson)
                     .endObject();
