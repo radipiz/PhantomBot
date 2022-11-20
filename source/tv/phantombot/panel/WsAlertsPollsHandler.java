@@ -20,8 +20,6 @@ import com.gmt2001.httpwsserver.WebSocketFrameHandler;
 import com.gmt2001.httpwsserver.WsFrameHandler;
 import com.gmt2001.httpwsserver.auth.WsAuthenticationHandler;
 import com.gmt2001.httpwsserver.auth.WsSharedRWTokenAuthenticationHandler;
-import com.illusionaryone.Logger;
-import com.illusionaryone.Logger.LogType;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
@@ -35,11 +33,9 @@ import org.json.JSONStringer;
 import tv.phantombot.CaselessProperties;
 import tv.phantombot.event.EventBus;
 import tv.phantombot.event.webpanel.websocket.WebPanelSocketUpdateEvent;
-import tv.phantombot.scripts.handler.text2speech.GameTtsImpl;
 import tv.phantombot.scripts.handler.text2speech.Text2SpeechFailedException;
-import tv.phantombot.service.ServiceConfigurationIncompleteException;
+import tv.phantombot.scripts.handler.text2speech.Text2SpeechProvider;
 import tv.phantombot.service.ServiceException;
-import tv.phantombot.service.ServiceNotConfiguredException;
 import tv.phantombot.service.Services;
 
 /**
@@ -303,16 +299,19 @@ public class WsAlertsPollsHandler implements WsFrameHandler {
 
     public void playTextToSpeech(String text, TtsParams.GameTtsParams params) {
         try {
-            String speech = Base64.getEncoder().encodeToString(Services.getText2Speech().synthesize("Wir testen TTS"));
+            Text2SpeechProvider ttsEngine = Services.getText2Speech();
+            String speech = Base64.getEncoder().encodeToString(ttsEngine.synthesize(text));
             JSONStringer jsonObject = new JSONStringer();
             JSONObject paramsJson = new JSONObject()
                     .put("speech_speed", params.getSpeech_speed())
                     .put("emotion_id", params.getEmotion_id())
                     .put("style_id", params.getStyle_id());
             jsonObject.object()
-                    .key("engine").value("GameTTS")
+                    .key("alerttype").value("tts")
+                    .key("engine").value(ttsEngine.getProviderName())
                     .key("text").value(text)
                     .key("audio").value(speech)
+                    .key("mimetype").value(ttsEngine.getAudioMimeType())
                     .key("params").value(paramsJson)
                     .endObject();
             sendJSONToAll(jsonObject.toString());

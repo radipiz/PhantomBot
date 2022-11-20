@@ -56,14 +56,15 @@ public class GameTtsImpl implements Text2SpeechProvider {
     public static final String PARAM_TEXT = "text";
 
     public static final String PATH_SYNTHESIZE = "/synthesize";
+    public static final String AUDIO_MIMETYPE = "audio/mp3";
 
     protected Map<String, Object> parameters = new HashMap<>();
 
     private final URI serviceUri;
 
     public GameTtsImpl() throws ServiceConfigurationIncompleteException {
-        String key = Services.CONFIG_PREFIX_TEXT2SPEECH + '.' + CONFIG_SERVICE_URI;
-        String value = CaselessProperties.instance().getProperty(key);
+        String key = Services.CONFIG_PREFIX_TEXT2SPEECH + CONFIG_SERVICE_URI;
+        String value = CaselessProperties.instance().getProperty(key, "");
         if (value.isEmpty()) {
             throw new ServiceConfigurationIncompleteException("Required configuration key is missing or empty: " + key);
         }
@@ -78,15 +79,15 @@ public class GameTtsImpl implements Text2SpeechProvider {
                 CONFIG_SPEAKER, PARAM_SPEAKER_ID,
                 CONFIG_STYLE, PARAM_STYLE_ID
         ).forEach((configKey, paramKey) -> {
-            String iKey = Services.CONFIG_PREFIX_TEXT2SPEECH + '.' + configKey;
-            String iValue = CaselessProperties.instance().getProperty(iKey);
+            String iKey = Services.CONFIG_PREFIX_TEXT2SPEECH + configKey;
+            String iValue = CaselessProperties.instance().getProperty(iKey, "");
             if (!iValue.isEmpty()) {
                 this.parameters.put(paramKey, Integer.parseInt(iValue));
             }
         });
 
-        key = Services.CONFIG_PREFIX_TEXT2SPEECH + '.' + CONFIG_SPEECH_SPEED;
-        value = CaselessProperties.instance().getProperty(key);
+        key = Services.CONFIG_PREFIX_TEXT2SPEECH  + CONFIG_SPEECH_SPEED;
+        value = CaselessProperties.instance().getProperty(key, "");
         if (!value.isEmpty()) {
             this.parameters.put(CONFIG_SPEECH_SPEED, Float.parseFloat(value));
         }
@@ -118,6 +119,16 @@ public class GameTtsImpl implements Text2SpeechProvider {
     @Override
     public Map<String, Object> getParameters() {
         return parameters;
+    }
+
+    @Override
+    public String getAudioMimeType(){
+        return AUDIO_MIMETYPE;
+    }
+
+    @Override
+    public String getProviderName(){
+        return PROVIDER_NAME;
     }
 
     public int getEmotionId() {
