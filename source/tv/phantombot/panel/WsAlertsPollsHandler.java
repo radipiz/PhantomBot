@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import tv.phantombot.CaselessProperties;
+import tv.phantombot.common.BotException;
 import tv.phantombot.event.EventBus;
 import tv.phantombot.event.webpanel.websocket.WebPanelSocketUpdateEvent;
 import tv.phantombot.scripts.handler.text2speech.Text2SpeechFailedException;
@@ -345,7 +346,7 @@ public class WsAlertsPollsHandler implements WsFrameHandler {
             sendJSONToAll(jsonObject.toString());
         } catch (Text2SpeechFailedException e) {
             com.gmt2001.Console.err.println(e.getMessage() + (e.getCause() != null ? "Reason: %s" : ""));
-        } catch (ServiceException e) {
+        } catch (BotException e) {
             com.gmt2001.Console.err.println(e.getMessage());
         }
     }

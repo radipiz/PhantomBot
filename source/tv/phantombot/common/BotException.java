@@ -14,22 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tv.phantombot.service;
+package tv.phantombot.common;
 
-public class ServiceException extends Exception {
-    public ServiceException() {
-        super();
+public class BotException extends Exception {
+    public BotException() {
     }
 
-    public ServiceException(String reason) {
+    public BotException(String reason) {
         super(reason);
     }
 
-    public ServiceException(Exception cause) {
+    public BotException(Exception cause) {
         super(cause);
     }
 
-    public ServiceException(String reason, Exception cause) {
+    public BotException(String reason, Exception cause) {
         super(reason, cause);
     }
+
 }

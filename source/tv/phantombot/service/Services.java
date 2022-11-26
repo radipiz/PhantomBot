@@ -1,6 +1,8 @@
 package tv.phantombot.service;
 
 import tv.phantombot.CaselessProperties;
+import tv.phantombot.common.BotException;
+import tv.phantombot.common.ConfigurationException;
 import tv.phantombot.scripts.handler.text2speech.GameTtsImpl;
 import tv.phantombot.scripts.handler.text2speech.Text2SpeechProvider;
 
@@ -11,7 +13,7 @@ public class Services {
 
     private Services(){}
 
-    private static Text2SpeechProvider createText2Speech() throws ServiceNotConfiguredException, ServiceConfigurationIncompleteException {
+    private static Text2SpeechProvider createText2Speech() throws BotException {
         String provider = CaselessProperties.instance().getProperty(CONFIG_PREFIX_TEXT2SPEECH + CONFIG_KEY_PROVIDER, "");
         Text2SpeechProvider ttsProvider;
         com.gmt2001.Console.debug.println(String.format("Trying to configure text2speech provider. '%s'", provider));
@@ -20,12 +22,12 @@ public class Services {
                 ttsProvider = new GameTtsImpl();
                 break;
             default:
-                throw new ServiceNotConfiguredException("Text2Speech service is not configured. Please configure add services.text2speech.provider to config");
+                throw new ConfigurationException("Text2Speech service is not configured. Please configure add services.text2speech.provider to config");
         }
         return ttsProvider;
     }
 
-    public static Text2SpeechProvider getText2Speech() throws ServiceNotConfiguredException, ServiceConfigurationIncompleteException {
+    public static Text2SpeechProvider getText2Speech() throws BotException {
         if(tts == null){
             tts = createText2Speech();
         }

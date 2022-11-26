@@ -8,7 +8,8 @@ import java.util.List;
 
 import org.json.JSONObject;
 import tv.phantombot.CaselessProperties;
-import tv.phantombot.service.ServiceConfigurationIncompleteException;
+import tv.phantombot.common.BotException;
+import tv.phantombot.common.ConfigurationException;
 import tv.phantombot.service.Services;
 
 public class GameTtsImpl implements Text2SpeechProvider {
@@ -57,37 +58,10 @@ public class GameTtsImpl implements Text2SpeechProvider {
 
     protected TtsParams.GameTtsParams parameters = new TtsParams.GameTtsParams();
 
-    private final URI serviceUri;
+    private URI serviceUri;
 
-    public GameTtsImpl() throws ServiceConfigurationIncompleteException {
-        String key = Services.CONFIG_PREFIX_TEXT2SPEECH + CONFIG_SERVICE_URI;
-        String value = CaselessProperties.instance().getProperty(key, "");
-        if (value.isEmpty()) {
-            throw new ServiceConfigurationIncompleteException("Required configuration key is missing or empty: " + key);
-        }
-        try {
-            this.serviceUri = URI.create(value);
-        } catch (IllegalArgumentException e) {
-            throw new ServiceConfigurationIncompleteException("Configuration key " + key + " contains invalid value: " + value, e);
-        }
-
-        String emotionId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + PROVIDER_NAME + "." + CONFIG_EMOTION, "");
-        String speakerId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + PROVIDER_NAME + "." + CONFIG_SPEAKER, "");
-        String styleId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + PROVIDER_NAME + "." + CONFIG_STYLE, "");
-        String speechSpeed = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + PROVIDER_NAME + "." + CONFIG_SPEECH_SPEED, "");
-
-        if(!emotionId.isEmpty()){
-            parameters.Emotion_id(Integer.parseInt(emotionId));
-        }
-        if(!speakerId.isEmpty()){
-            parameters.Speaker_id(Integer.parseInt(speakerId));
-        }
-        if(!styleId.isEmpty()){
-            parameters.Style_id(Integer.parseInt(styleId));
-        }
-        if(!speechSpeed.isEmpty()){
-            parameters.Speech_speed(Float.parseFloat(speechSpeed));
-        }
+    public GameTtsImpl() throws BotException {
+        reload();
     }
 
     @Override
@@ -117,12 +91,44 @@ public class GameTtsImpl implements Text2SpeechProvider {
     }
 
     @Override
-    public String getAudioMimeType(){
+    public String getAudioMimeType() {
         return AUDIO_MIMETYPE;
     }
 
     @Override
-    public String getProviderName(){
+    public String getProviderName() {
         return PROVIDER_NAME;
+    }
+
+    @Override
+    public void reload() throws BotException {
+        String key = Services.CONFIG_PREFIX_TEXT2SPEECH + CONFIG_SERVICE_URI;
+        String value = CaselessProperties.instance().getProperty(key, "");
+        if (value.isEmpty()) {
+            throw new ConfigurationException("Required configuration key is missing or empty: " + key);
+        }
+        try {
+            this.serviceUri = URI.create(value);
+        } catch (IllegalArgumentException e) {
+            throw new ConfigurationException("Configuration key " + key + " contains invalid value: " + value, e);
+        }
+
+        String emotionId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + PROVIDER_NAME + "." + CONFIG_EMOTION, "");
+        String speakerId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + PROVIDER_NAME + "." + CONFIG_SPEAKER, "");
+        String styleId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + PROVIDER_NAME + "." + CONFIG_STYLE, "");
+        String speechSpeed = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + PROVIDER_NAME + "." + CONFIG_SPEECH_SPEED, "");
+
+        if (!emotionId.isEmpty()) {
+            parameters.Emotion_id(Integer.parseInt(emotionId));
+        }
+        if (!speakerId.isEmpty()) {
+            parameters.Speaker_id(Integer.parseInt(speakerId));
+        }
+        if (!styleId.isEmpty()) {
+            parameters.Style_id(Integer.parseInt(styleId));
+        }
+        if (!speechSpeed.isEmpty()) {
+            parameters.Speech_speed(Float.parseFloat(speechSpeed));
+        }
     }
 }
