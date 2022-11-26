@@ -9,6 +9,8 @@ public class Services {
     public static final String CONFIG_KEY_PROVIDER = "provider";
     private static Text2SpeechProvider tts;
 
+    private Services(){}
+
     private static Text2SpeechProvider createText2Speech() throws ServiceNotConfiguredException, ServiceConfigurationIncompleteException {
         String provider = CaselessProperties.instance().getProperty(CONFIG_PREFIX_TEXT2SPEECH + CONFIG_KEY_PROVIDER, "");
         Text2SpeechProvider ttsProvider;

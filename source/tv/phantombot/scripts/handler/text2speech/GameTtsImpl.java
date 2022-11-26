@@ -14,7 +14,6 @@ import tv.phantombot.service.Services;
 public class GameTtsImpl implements Text2SpeechProvider {
 
     public static final String PROVIDER_NAME = "GameTTS";
-
     public static final String CONFIG_SERVICE_URI = "uri";
     public static final String CONFIG_EMOTION = "emotion";
     public static final String CONFIG_SPEAKER = "speaker";
@@ -72,10 +71,10 @@ public class GameTtsImpl implements Text2SpeechProvider {
             throw new ServiceConfigurationIncompleteException("Configuration key " + key + " contains invalid value: " + value, e);
         }
 
-        String emotionId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + CONFIG_EMOTION, "");
-        String speakerId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + CONFIG_EMOTION, "");
-        String styleId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + CONFIG_EMOTION, "");
-        String speechSpeed = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + CONFIG_EMOTION, "");
+        String emotionId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + PROVIDER_NAME + "." + CONFIG_EMOTION, "");
+        String speakerId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + PROVIDER_NAME + "." + CONFIG_SPEAKER, "");
+        String styleId = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + PROVIDER_NAME + "." + CONFIG_STYLE, "");
+        String speechSpeed = CaselessProperties.instance().getProperty(Services.CONFIG_PREFIX_TEXT2SPEECH + PROVIDER_NAME + "." + CONFIG_SPEECH_SPEED, "");
 
         if(!emotionId.isEmpty()){
             parameters.Emotion_id(Integer.parseInt(emotionId));
