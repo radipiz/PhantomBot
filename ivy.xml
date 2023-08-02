@@ -65,9 +65,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <dependency org="org.mozilla" name="rhino" rev="1.7.14"/>
         <dependency org="org.slf4j" name="slf4j-nop" rev="2.0.9"/>
         <!-- Conflict Resolvers -->
-        <conflict org="com.h2database" manager="all"/>
         <dependency org="org.junit.jupiter" name="junit-jupiter-api" rev="5.9.1"/>
         <dependency org="org.mockito" name="mockito-core" rev="4.8.1"/>
         <dependency org="org.mockito" name="mockito-inline" rev="4.8.1"/>
+        <conflict org="com.h2database" manager="all"/>
     </dependencies>
 </ivy-module>
