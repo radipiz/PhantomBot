@@ -292,7 +292,7 @@ public class WsAlertsPollsHandler implements WsFrameHandler {
      */
     public void playTextToSpeech(String text, TtsParams.GameTtsParams params) {
         try {
-            Text2SpeechProvider ttsEngine = Services.getText2Speech();
+            tv.phantombot.scripts.handler.text2speech.Text2SpeechProvider ttsEngine = Services.getText2Speech();
             byte[] speech;
             JSONObject paramsJson;
             // if params is null, use the defaults of the configured engine
@@ -316,7 +316,7 @@ public class WsAlertsPollsHandler implements WsFrameHandler {
                     .endObject();
             sendJSONToAll(jsonObject.toString());
         } catch (Text2SpeechFailedException e) {
-            com.gmt2001.Console.err.println(e.getMessage() + (e.getCause() != null ? "Reason: %s" : ""));
+            com.gmt2001.Console.err.println(e.getMessage() + (e.getCause() != null ? "Reason: " + e.getCause() : ""));
         } catch (ServiceException e) {
             com.gmt2001.Console.err.println(e.getMessage());
         }
