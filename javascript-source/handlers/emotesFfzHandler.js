@@ -49,7 +49,9 @@
     });
 
     $.bind('emotesCacheUpdated', function (event) {
-        prepareLocalCache(event.getFfzEmotes());
+        if(event.getEmoteSets()[emoteProvider]){
+            prepareLocalCache(event.getEmoteSets()[emoteProvider]);
+        }
     });
 
     $.bind('initReady', function () {

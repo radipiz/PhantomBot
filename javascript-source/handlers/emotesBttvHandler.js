@@ -50,7 +50,9 @@
     });
 
     $.bind('emotesCacheUpdated', function (event) {
-        prepareLocalCache(event.getBttvEmotes());
+        if(event.getEmoteSets()[emoteProvider]){
+            prepareLocalCache(event.getEmoteSets()[emoteProvider]);
+        }
     });
 
     $.bind('initReady', function () {
