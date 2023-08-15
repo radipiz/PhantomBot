@@ -67,7 +67,8 @@ public class EmotesCache implements Runnable {
 
         this.emoteProviders = List.of(
                 BttvApiV3.instance(),
-                FrankerFacezApiV1.instance()
+                FrankerFacezApiV1.instance(),
+                SevenTVAPIv3.instance()
         );
 
         this.channel = channel;
