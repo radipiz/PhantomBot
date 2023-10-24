@@ -23,11 +23,7 @@ import com.gmt2001.twitch.cache.ViewerCache;
 import org.apache.commons.lang3.Validate;
 import tv.phantombot.event.EventBus;
 import tv.phantombot.event.emotes.EmotesGetEvent;
-import tv.phantombot.twitch.emotes.BttvApiV3;
-import tv.phantombot.twitch.emotes.EmoteApiRequestFailedException;
-import tv.phantombot.twitch.emotes.EmoteEntry;
-import tv.phantombot.twitch.emotes.EmoteProvider;
-import tv.phantombot.twitch.emotes.FrankerFacezApiV1;
+import tv.phantombot.twitch.emotes.*;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
