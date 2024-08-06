@@ -9,11 +9,14 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import net.engio.mbassy.listener.Handler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import tv.phantombot.CaselessProperties;
 import tv.phantombot.PhantomBot;
+import tv.phantombot.event.EventBus;
 import tv.phantombot.event.Listener;
+import tv.phantombot.event.hexagon.*;
 import tv.phantombot.event.irc.message.IrcChannelMessageEvent;
 
 import java.io.File;
@@ -53,6 +56,16 @@ public class WsCockpitHandler implements WsFrameHandler, Listener {
     public static final String REQUEST_PLAY_MACRO = "playMacro";
     public static final String REQUEST_STOP_MEDIA = "stopMedia";
     public static final String REQUEST_TRIGGER_EMOTE = "triggerEmote";
+
+    // Cockpit Start
+    public static final String REQUEST_HEXAGON_GAME_START = "hexagonGameStart";
+    public static final String REQUEST_HEXAGON_GAME_END = "hexagonGameEnd";
+    public static final String REQUEST_HEXAGON_CHANGE_SETTINGS = "hexagonChangeSettings";
+    public static final String KEY_ABORT = "abort";
+    public static final String KEY_GAME_TIME = "gameTime";
+    public static final String KEY_LEVEL = "level";
+    public static final String KEY_PLAYER_NAME = "playerName";
+    // Cockpit End
 
     public static final String REQUEST_GET_AUDIO_FILES = "getAudioFiles";
     public static final String REQUEST_GET_CLIP_FILES = "getClipFiles";
@@ -99,7 +112,7 @@ public class WsCockpitHandler implements WsFrameHandler, Listener {
                 json = new JSONObject(tframe.text());
 
                 if ("true".equalsIgnoreCase(
-                    CaselessProperties.instance().getProperty("wsdebug", "false")
+                        CaselessProperties.instance().getProperty("wsdebug", "false")
                 )) {
                     com.gmt2001.Console.debug.println(json.toString());
                 }
@@ -196,6 +209,15 @@ public class WsCockpitHandler implements WsFrameHandler, Listener {
                     break;
                 case REQUEST_GET_CLIP_FILES:
                     handleGetClipFiles(response);
+                    break;
+                case REQUEST_HEXAGON_GAME_START:
+                    handleHexagonGameStart(json, response);
+                    break;
+                case REQUEST_HEXAGON_GAME_END:
+                    handleHexagonGameEnd(json, response);
+                    break;
+                case REQUEST_HEXAGON_CHANGE_SETTINGS:
+                    handleHexagonChangeSettings(json, response);
                     break;
                 default:
                     throw new InvalidRequestException(String.format("Unknown command '%s'", requestType));
@@ -341,6 +363,37 @@ public class WsCockpitHandler implements WsFrameHandler, Listener {
         response.key(KEY_STATUS).value(STATUS_OK);
     }
 
+    private void handleHexagonGameStart(JSONObject json, final JSONStringer response) throws InvalidRequestException {
+        final String playerName = json.getString(KEY_PLAYER_NAME);
+        final int level = json.getInt(KEY_LEVEL);
+        final int gameTime = json.getInt(KEY_GAME_TIME);
+        if (StringUtils.isEmpty(playerName)) {
+            throw new InvalidRequestException(STRING_JSON_IS_MISSING_KEY + KEY_PLAYER_NAME);
+        }
+        if (level < 0 || level > 10) {
+            throw new InvalidRequestException(KEY_LEVEL + " must be between 0 and 10");
+        }
+        EventBus.instance().postAsync(new HexagonGameStartRequestEvent(playerName, level, gameTime));
+        response.key(KEY_STATUS).value(STATUS_OK);
+    }
+
+    private void handleHexagonGameEnd(JSONObject json, final JSONStringer response) {
+        final boolean abort = json.getBoolean(KEY_ABORT);
+        EventBus.instance().postAsync(new HexagonGameEndRequestEvent(abort));
+        response.key(KEY_STATUS).value(STATUS_OK);
+    }
+
+    private void handleHexagonChangeSettings(JSONObject json, final JSONStringer response) throws InvalidRequestException {
+        final String playerName = json.optString(KEY_PLAYER_NAME, null);
+        final int level = json.getInt(KEY_LEVEL);
+        final int gameTime = json.getInt(KEY_GAME_TIME);
+        if (level < 0 || level > 10) {
+            throw new InvalidRequestException(KEY_LEVEL + " must be between 0 and 10");
+        }
+        EventBus.instance().postAsync(new HexagonChangeGameRequestEvent(playerName, gameTime, level));
+        response.key(KEY_STATUS).value(STATUS_OK);
+    }
+
     @Handler
     private static void onIrcChannelMessage(IrcChannelMessageEvent event) {
         JSONStringer json = new JSONStringer();
@@ -351,6 +404,25 @@ public class WsCockpitHandler implements WsFrameHandler, Listener {
                 .key("sender").value(event.getSender())
                 .key("id").value(event.getTags().getOrDefault("id", java.util.UUID.randomUUID().toString()))
                 .key("timestamp").value(Long.parseLong(event.getTags().getOrDefault("tmi-sent-ts", "1616899474000")))
+                .endObject();
+        WebSocketFrameHandler.broadcastWsFrame(WS_PATH, WebSocketFrameHandler.prepareTextWebSocketResponse(json.toString()));
+    }
+
+    @Handler
+    private static void onHexagonMessage(HexagonMessageEvent event) {
+        JSONStringer json = new JSONStringer();
+        json.object()
+                .key(KEY_REQUEST_ID).value("hexagonMessage")
+                .key("message").value(event.message)
+                .endObject();
+        WebSocketFrameHandler.broadcastWsFrame(WS_PATH, WebSocketFrameHandler.prepareTextWebSocketResponse(json.toString()));
+    }
+    @Handler
+    private static void onHexagonState(HexagonStateEvent event) {
+        JSONStringer json = new JSONStringer();
+        json.object()
+                .key(KEY_REQUEST_ID).value("hexagonState")
+                .key("state").value(event.state.str)
                 .endObject();
         WebSocketFrameHandler.broadcastWsFrame(WS_PATH, WebSocketFrameHandler.prepareTextWebSocketResponse(json.toString()));
     }

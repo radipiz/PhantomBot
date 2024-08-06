@@ -55,6 +55,14 @@ cockpit.onChatMessage = function (event) {
     }
 };
 
+cockpit.onHexagonMessage = function(event) {
+    toast('toast-info', event.message);
+};
+
+cockpit.onHexagonStateUpdate = function(event) {
+    toast('toast-info', event.state);
+};
+
 cockpit.substituteNativeEmotes = function (message, emoteString) {
     if (emoteString === undefined) {
         return message;
@@ -288,14 +296,14 @@ cockpit.addEventHandlers = function () {
     document.getElementById('btnHexagonGameStart').addEventListener('click', (event) => {
         let playerName = document.getElementById('btnHexagonName').value;
         let level = parseInt(document.getElementById('inputHexagonLevel').value);
-        socket.hexagonGameStart('hexagonGameStart', playerName, level, (result) => { console.log(result); })
+        socket.hexagonGameStart('hexagonGameStart', playerName, level, -1, (result) => { console.log(result); })
     });
     document.getElementById('btnHexagonGameEnd').addEventListener('click', (event) => {
-        socket.hexagonGameEnd('hexagonGameEnd', (result) => { console.log(result); })
+        socket.hexagonGameEnd('hexagonGameEnd', false, (result) => { console.log(result); })
     });
     document.getElementById('btnHexagonSetLevel').addEventListener('click', (event) => {
             let level = parseInt(document.getElementById('inputHexagonLevel').value);
-            socket.hexagonSetLevel('hexagonSetLevel', level, (result) => { console.log(result); })
+            socket.hexagonChangeSettings('hexagonChangeSettings', null, level, -1, (result) => { console.log(result); })
         });
 }
 
@@ -380,6 +388,12 @@ cockpit.init = function () {
     this.domChatrows = document.getElementById("chatrows");
     socket.subscribe('ircChannelMessage', (event) => {
         closure.onChatMessage(event);
+    });
+    socket.subscribe('hexagonMessage', (event) => {
+        closure.onHexagonMessage(event);
+    });
+    socket.subscribe('hexagonState', (event) => {
+        closure.onHexagonStateUpdate(event);
     });
     this.addEventHandlers();
     MacroEditor.init(function () {

@@ -103,6 +103,7 @@ import tv.phantombot.script.Script;
 import tv.phantombot.script.ScriptEventManager;
 import tv.phantombot.script.ScriptFileWatcher;
 import tv.phantombot.script.ScriptManager;
+import tv.phantombot.scripts.handler.hexagon.HexagonController;
 import tv.phantombot.twitch.api.Helix;
 import tv.phantombot.twitch.api.TwitchValidate;
 import tv.phantombot.twitch.irc.TwitchSession;
@@ -129,6 +130,7 @@ public final class PhantomBot implements Listener {
     private WsYTHandler ytHandler;
 
     private WsCockpitHandler cockpitHandler;
+    private HexagonController hexagonController;
     private HTTPOAuthHandler oauthHandler;
     private HTTPAuthenticatedHandler httpAuthenticatedHandler;
     private HTTPPanelAndYTHandler httpPanelHandler;
@@ -482,6 +484,7 @@ public final class PhantomBot implements Listener {
             this.session.doSubscribe();
 
             this.tmi = new TwitchMessageInterface();
+            this.hexagonController = new HexagonController();
         }
 
         this.cockpitHandler = (WsCockpitHandler) new WsCockpitHandler(

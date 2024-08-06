@@ -201,20 +201,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
         sendToSocket({requestId, requestType, enabled, username, callback});
     }
 
-    socket.hexagonGameStart = function (requestId, playerName, level, callback){
+    socket.hexagonGameStart = function (requestId, playerName, level, gameTime, callback){
         registerCallback(requestId, callback);
         let requestType = 'hexagonGameStart';
-        sendToSocket({requestId, requestType, level, playerName});
+        sendToSocket({requestId, requestType, level, playerName, gameTime});
     }
-    socket.hexagonGameEnd = function (requestId, callback){
+    socket.hexagonGameEnd = function (requestId, abort, callback){
         registerCallback(requestId, callback);
         let requestType = 'hexagonGameEnd';
-        sendToSocket({requestId, requestType});
+        sendToSocket({requestId, abort, requestType});
     }
-    socket.hexagonSetLevel = function (requestId, level, callback){
+    socket.hexagonChangeSettings = function (requestId, playerName, level, gameTime, callback){
         registerCallback(requestId, callback);
-        let requestType = 'hexagonSetLevel';
-        sendToSocket({requestId, level, requestType});
+        let requestType = 'hexagonChangeSettings';
+        sendToSocket({requestId, playerName, level, gameTime, requestType});
     }
 
     // Make this a global object.
